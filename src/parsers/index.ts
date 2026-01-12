@@ -1,6 +1,11 @@
 import * as path from 'path';
 import { ParseOutcome } from './types.js';
 import { parseRust, supportsExtension as rustSupports } from './rust.js';
+import { parsePython, supportsExtension as pythonSupports } from './python.js';
+import { parseTypeScript, supportsExtension as tsSupports } from './typescript.js';
+import { parsePHP, supportsExtension as phpSupports } from './php.js';
+import { parseCSharp, supportsExtension as csharpSupports } from './csharp.js';
+import { parseGDScript, supportsExtension as gdscriptSupports } from './gdscript.js';
 
 export { ParseOutcome, ParseResult, ParseError } from './types.js';
 export type { FileSummary } from './types.js';
@@ -8,7 +13,14 @@ export type { FileSummary } from './types.js';
 /**
  * Supported file extensions and their parsers
  */
-const SUPPORTED_EXTENSIONS = new Set(['.rs']);
+const SUPPORTED_EXTENSIONS = new Set([
+  '.rs',
+  '.py',
+  '.ts', '.tsx', '.js', '.jsx',
+  '.php',
+  '.cs',
+  '.gd',
+]);
 
 /**
  * Check if a file extension is supported for summarization
@@ -34,6 +46,26 @@ export function parseFile(filePath: string, content: string): ParseOutcome | nul
 
   if (rustSupports(ext)) {
     return parseRust(content);
+  }
+
+  if (pythonSupports(ext)) {
+    return parsePython(content);
+  }
+
+  if (tsSupports(ext)) {
+    return parseTypeScript(content, ext);
+  }
+
+  if (phpSupports(ext)) {
+    return parsePHP(content);
+  }
+
+  if (csharpSupports(ext)) {
+    return parseCSharp(content);
+  }
+
+  if (gdscriptSupports(ext)) {
+    return parseGDScript(content);
   }
 
   // Unsupported file type
